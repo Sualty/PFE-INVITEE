@@ -213,4 +213,4 @@ public class MovingPanel3D extends JPanel {
             positions[k].z = ((2*(z - z_min)/(z_max-z_min)) - 1f)/2;
         }
     }
-}//
+}///
