@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.vecmath.*;
 
 import com.sun.j3d.utils.geometry.*;
+import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.scenegraph.io.state.javax.media.j3d.RotPosPathInterpolatorState;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
@@ -49,7 +50,7 @@ public class MovingPanel3D extends JPanel {
         BranchGroup scene = createSceneGraph();
         SimpleUniverse simpleUniverse = new SimpleUniverse(canvas3D);
 
-        //scene.addChild(createSceneGraph());
+        // scene.addChild(createSceneGraph());
 
         simpleUniverse.getViewingPlatform().setNominalViewingTransform();
         simpleUniverse.addBranchGraph(scene);
@@ -57,8 +58,10 @@ public class MovingPanel3D extends JPanel {
     }
 
     public BranchGroup createSceneGraph() throws IOException, InterruptedException {
-        //----------------------début de la création de la translation--------------------------------
-        //on crée le Bg principal
+
+        //----------------------début de la création de la translation et de la rotation--------------------------------
+
+        //on crée le BranchGroup principal
         BranchGroup objRoot=new BranchGroup();
 
         // on crée un fonction de rotation au cours du temps
@@ -78,11 +81,10 @@ public class MovingPanel3D extends JPanel {
 
         //----------------------initialisation--------------------------------
         //initilaisation des tableaux de données
-            initPositionsAndQuats();
-
+        initPositionsAndQuats();
 
         // On normalise les valeurs du tableau entre -1 et 1
-            normalisation();
+        normalisation();
 
         //On associe un temps à chaque point
         // Concrètement on divise 1 par le nombre de points moins 1 et on multiplie par j
@@ -105,8 +107,6 @@ public class MovingPanel3D extends JPanel {
 
         // on définit la zone sur laquelle va s'appliquer le chemin
 
-
-
         BoundingSphere bounds=new BoundingSphere();
         interpol.setSchedulingBounds(bounds);
 
@@ -121,19 +121,16 @@ public class MovingPanel3D extends JPanel {
 
         objSpin.addChild( interpol);
 
-        //----------------------début de la création de la translation--------------------------------
-
+        //----------------------fin de la création de la translation et de la rotation--------------------------------
 
 
         // on cree une sphere qui hérite de la translation
-        objSpin.addChild(new Sphere(0.10f));
-        //objSpin.addChild(new Cone(0.10f,1f));
-
+        objSpin.addChild(new Sphere(0.15f));
+        objSpin.addChild(new Cylinder(0.10f,1f));
+        objSpin.addChild(new Box(0.10f, 0.10f, 0.10f, null));
         objRoot.addChild(objSpin);
 
         return objRoot;
-
-
     }
 
     public void initPositionsAndQuats() throws IOException {
@@ -185,7 +182,6 @@ public class MovingPanel3D extends JPanel {
                 z_min =  Float.parseFloat(array[6]);
             }
 
-
             positions[i] = new Point3f (
                     Float.parseFloat(array[4]),
                     Float.parseFloat(array[5]),
@@ -205,17 +201,13 @@ public class MovingPanel3D extends JPanel {
     }
 
     public void normalisation() {
-        //System.out.println("normalisation");
         for (int k = 0; k<valeur; k++){
-           // System.out.println("position "+k);
             float x;
             float y;
             float z;
-            //System.out.println(positions[k].y);
             x = positions[k].x;
             y = positions[k].y;
             z = positions[k].z;
-
             positions[k].x = ((2*(x - x_min)/(x_max-x_min)) - 1f)/2;
             positions[k].y = ((2*(y - y_min)/(y_max-y_min)) - 1f)/2;
             positions[k].z = ((2*(z - z_min)/(z_max-z_min)) - 1f)/2;
